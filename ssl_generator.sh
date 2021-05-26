@@ -7,8 +7,13 @@ quit_mode=0
 
 key_id="$(date +%Y_%m_%d_%H_%M)"
 
+trap 'cleanup' SIGINT
+trap 'cleanup' SIGQUIT
+trap 'cleanup' 0
+
 clean_up(){
 	quit_mode=1
+	rm *.log
 	clear
 }
 
