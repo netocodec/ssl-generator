@@ -7,9 +7,9 @@ quit_mode=0
 
 key_id="$(date +%Y_%m_%d_%H_%M)"
 
-trap 'cleanup' SIGINT
-trap 'cleanup' SIGQUIT
-trap 'cleanup' 0
+trap 'clean_up' SIGINT
+trap 'clean_up' SIGQUIT
+trap 'clean_up' 0
 
 clean_up(){
 	quit_mode=1
