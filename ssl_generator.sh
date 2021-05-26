@@ -30,19 +30,23 @@ check_dependencies(){
 }
 
 generate_cert_file(){
-echo "Hello"
+	dialog --title "$application_title" --gauge "Generate SSL Certificate File..." 0 0 90 &
+	openssl x509 -req -days 365 -in csr_$key_id.csr -signkey private_key_$key_id.pem -out ssl_certificate_$key_id.crt -passin pass:$cert_password
 }
 
 generate_csr_file(){
-echo "Hello"
+	dialog --title "$application_title" --gauge "Generate CSR File..." 0 0 70 &
+	openssl req -new -newkey rsa:2048 -nodes -keyout private_key_$key_id.pem -out csr_$key_id.csr -passin pass:$cert_password
 }
 
 generate_pub_key(){
-	openssl rsa -in private_key_$key_id.pem -outform PEM -pubout -out public_key_$key_id.pem -passin pass:$cert_password
+	dialog --title "$application_title" --gauge "Generate Public Key File..." 0 0 40 &
+	openssl rsa -in private_key_$key_id.pem -outform PEM -pubout -out public_key_$key_id.pem -passin pass:$cert_password > pub.log
 }
 
 generate_priv_key(){
-	openssl genrsa -$version -out private_key_$key_id.pem -passout pass:$cert_password 2048
+	dialog --title "$application_title" --gauge "Generate Private Key File..." 0 0 10 &
+	openssl genrsa -$version -out private_key_$key_id.pem -passout pass:$cert_password 2048 > priv.log
 }
 
 
@@ -95,7 +99,10 @@ init_menu(){
 			;;
 
 			[2])
-			echo "HEHEHEH"
+			select_cert_type
+			generate_priv_key
+			generate_csr_file
+			generate_cert_file
 			;;
 
 			[3])
@@ -106,9 +113,8 @@ init_menu(){
 		if [ $quit_mode -eq 0 ];then
 			done_message
 		fi
-	else
-		clean_up
 	fi
+	clean_up
 }
 
 
