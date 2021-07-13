@@ -54,6 +54,15 @@ generate_priv_key(){
 	openssl genrsa -$version -out private_key_$key_id.pem -passout pass:$cert_password 2048 > priv.log
 }
 
+generate_random_keys(){
+	dialog --title "$application_title" --gauge "Generate Private Key File..." 0 0 10 &
+	openssl genrsa -out private_key_$key_id.pem 2048
+	dialog --title "$application_title" --gauge "Generate Public Key File..." 0 0 50 &
+	openssl ecparam -genkey -name secp384r1 -out server_$key_id.key
+	dialog --title "$application_title" --gauge "Generate Certificate File..." 0 0 90 &
+	openssl req -new -x509 -sha256 -key server_$key_id.key -out server_$key_id.crt -days 3650
+}
+
 
 ask_cert_password(){
 	cert_password=$( dialog --stdout --title "$application_title" --passwordbox "Insert the password you want for the key:" \
@@ -88,7 +97,8 @@ init_menu(){
 		0 'Generate Public Key' \
 		1 'Generate Private Key' \
 		2 'Generate SSL Certificate' \
-		3 'Exit Menu' )
+		3 'Generate Random Key and Certificate' \
+		4 'Exit Menu' )
 
 	if [ "$option" != "" ]; then
 		case $option in
@@ -111,6 +121,10 @@ init_menu(){
 			;;
 
 			[3])
+			generate_random_keys
+			;;
+
+			[4])
 			clean_up
 			;;
 		esac
