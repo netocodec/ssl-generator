@@ -28,6 +28,8 @@ And then run with ``./ssl_generator.sh`` and there you go!
 
 - Supports AES algorithms like AES 256, 192 and 128.
 
+- It can generate random private and public keys and certificates using SHA encryption.
+
 
 ### Screenshots
 
